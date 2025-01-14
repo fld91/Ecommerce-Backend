@@ -5,6 +5,9 @@ import dev.umang.productservicenov24.models.Category;
 import dev.umang.productservicenov24.models.Product;
 import dev.umang.productservicenov24.repositories.CategoryRepository;
 import dev.umang.productservicenov24.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +27,16 @@ public class SelfProductService implements ProductService{
 
     @Override
     public List<Product> getAllProducts() {
+
         return productRepository.findAll();
+    }
+
+    @Override
+    public Page<Product> getAllProductsPaginated(int pageNo, int pageSize){
+        return productRepository.findAll(
+                PageRequest.of(pageNo, pageSize,
+                        Sort.by("title").descending().and(Sort.by("price").ascending()))
+        );
     }
 
     @Override

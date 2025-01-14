@@ -7,6 +7,7 @@ import dev.umang.productservicenov24.models.Product;
 import dev.umang.productservicenov24.services.FakeStoreProductService;
 import dev.umang.productservicenov24.services.ProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ProductController {
 
     public ProductService productService;
 
-    public ProductController(@Qualifier("selfProductService") ProductService productService){
+    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService){
         this.productService = productService;
     }
     /*
@@ -51,6 +52,14 @@ public class ProductController {
 
 
         return responseEntity;
+    }
+
+    @GetMapping("/products/paginated/")
+    public Page<Product> getProductsPaginated(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize){
+        Page<Product> productPage = productService.getAllProductsPaginated(pageNo, pageSize);
+        //google how to convert Page<V> to Product<V>
+        //TODO by students
+        return productPage;
     }
 
     /*

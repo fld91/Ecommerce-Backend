@@ -4,6 +4,8 @@ import dev.umang.productservicenov24.dtos.CreateProductRequestDto;
 import dev.umang.productservicenov24.dtos.FakeStoreProductDto;
 import dev.umang.productservicenov24.exceptions.ProductNotFoundException;
 import dev.umang.productservicenov24.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,14 @@ import java.util.List;
 
 @Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService{
-    private RestTemplate restTemplate ; //using this, you will be able to call 3rd party apis
+    private RestTemplate restTemplate ;
+    //using this, you will be able to call 3rd party apis
+    private RedisTemplate redisTemplate;
 
-    public FakeStoreProductService(RestTemplate restTemplate){
+    public FakeStoreProductService(RestTemplate restTemplate,
+                                   RedisTemplate redisTemplate){
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -45,27 +51,43 @@ public class FakeStoreProductService implements ProductService{
 //        FakeStoreProductDto fakeStoreProductDto = restTemplate.getForObject("https://fakestoreapi.com/products/" + id,
 //                FakeStoreProductDto.class);
 
+        //Check for data in the cache
+        //Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS", "product_" + id);
+        //am i trying to get an object over the network?
+
+//        if(product != null){
+//            //CACHE HIT
+//            return product;
+//        }
+
+        //cache miss
+
         ResponseEntity<FakeStoreProductDto> fakeStoreProductDtoResponseEntity = restTemplate.getForEntity("https://fakestoreapi.com/products/" + id,
                 FakeStoreProductDto.class);
 
 
-        if(fakeStoreProductDtoResponseEntity.getStatusCode() != HttpStatusCode.valueOf(200)){
-            //handle this exception
-        }
+//        if(fakeStoreProductDtoResponseEntity.getStatusCode() != HttpStatusCode.valueOf(200)){
+//            //handle this exception
+//        }
 
         //fakeStoreProductDtoResponseEntity.getHeaders();
 
         FakeStoreProductDto fakeStoreProductDto = fakeStoreProductDtoResponseEntity.getBody();
 
-        if(fakeStoreProductDto == null){
-            throw new ProductNotFoundException("Product with id " + id + " is not present with the service. It's an invalid id");
-        }
+//        if(fakeStoreProductDto == null){
+//            throw new ProductNotFoundException("Product with id " + id + " is not present with the service. It's an invalid id");
+//        }
 
         /*
         if(b != 0) a / b
         b is zero
          */
 
+
+        //product = fakeStoreProductDto.toProduct();
+
+        //redisTemplate.opsForHash().put("PRODUCTS", "product_" + id, product);
+        //are we sending an object over the network?
 
         return fakeStoreProductDto.toProduct();
     }
@@ -94,5 +116,10 @@ public class FakeStoreProductService implements ProductService{
         POST /products actually doesn't create a new object in the fakestore
         It's just a dummy api, it does nothing
          */
+    }
+
+    @Override
+    public Page<Product> getAllProductsPaginated(int pageNo, int pageSize) {
+        return null;
     }
 }

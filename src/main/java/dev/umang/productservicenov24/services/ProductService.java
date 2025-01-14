@@ -3,6 +3,7 @@ package dev.umang.productservicenov24.services;
 import dev.umang.productservicenov24.dtos.CreateProductRequestDto;
 import dev.umang.productservicenov24.exceptions.ProductNotFoundException;
 import dev.umang.productservicenov24.models.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface ProductService {
                           double price,
                           String imageUrl,
                           String category);
+
+    Page<Product> getAllProductsPaginated(int pageNo, int pageSize);
 }

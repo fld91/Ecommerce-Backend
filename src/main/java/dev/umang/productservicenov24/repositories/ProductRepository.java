@@ -3,6 +3,8 @@ package dev.umang.productservicenov24.repositories;
 import dev.umang.productservicenov24.models.Category;
 import dev.umang.productservicenov24.models.Product;
 import dev.umang.productservicenov24.projections.ProductProjection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +20,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Override
     List<Product> findAll();
+
+    @Override
+    Page<Product> findAll(Pageable pageable);
+
+    /*
+    select * from products
+    where title like 'iphone'
+    limit 10 offset 20 -----> SQL query
+     */
 
     @Override
     Optional<Product> findById(Long id);
